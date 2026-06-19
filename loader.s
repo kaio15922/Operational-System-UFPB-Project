@@ -1,30 +1,28 @@
-global loader                   ; the entry symbol for ELF
+global loader                   ; Símbolo de entrada para o Linker
 
-extern kmain                    ; make the label kmain visible outside this file
+MAGIC_NUMBER equ 0x1BADB002     ; Número mágico do Multiboot
+FLAGS        equ 0x00000001     ; Alinha módulos na memória
+CHECKSUM     equ -(MAGIC_NUMBER + FLAGS)
 
-KERNEL_STACK_SIZE equ 4096      ; Tamanho do stack em bytes
+section .text
+align 4
+    dd MAGIC_NUMBER
+    dd FLAGS
+    dd CHECKSUM
 
-MAGIC_NUMBER equ 0x1BADB002     ; define the magic number constant
-FLAGS        equ 0x0            ; multiboot flags
-CHECKSUM     equ -MAGIC_NUMBER  ; calculate the checksum
-                                ; (magic number + checksum + flags should equal 0)
-
-section .text:                  ; start of the text (code) section
-align 4                         ; the code must be 4 byte aligned
-    dd MAGIC_NUMBER             ; write the magic number to the machine code,
-    dd FLAGS                    ; the flags,
-    dd CHECKSUM                 ; and the checksum
-
-loader:                         ; the loader label (defined as entry point in linker script)
-    mov esp, kernel_stack + KERNEL_STACK_SIZE   ; point esp to the start of the
-                                                ; stack (end of memory area)
-
-    call kmain                                            
-
-    .loop:
-    jmp .loop                   ; loop forever
+KERNEL_STACK_SIZE equ 4096      ; Tamanho da Stack em bytes
 
 section .bss
-align 4                         ; Alinha o stack em 4 bytes por performance
-kernel_stack:                   ; Rótulo que aponta para o INÍCIO da área reservada
-    resb KERNEL_STACK_SIZE      ; Reserva os 4096 bytes na memória
+align 4
+kernel_stack:
+    resb KERNEL_STACK_SIZE      ; Reserva espaço para a pilha
+
+section .text                   ; <--- O PULO DO GATO! Voltando para a seção de código
+loader:
+    mov esp, kernel_stack + KERNEL_STACK_SIZE ; Aponta o ESP para o topo da pilha
+
+    extern kmain
+    call kmain                  ; Chama a função principal em C dos seus colegas
+
+.loop:
+    jmp .loop                   ; Loop de segurança caso o C retorne
