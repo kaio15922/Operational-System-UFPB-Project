@@ -22,11 +22,11 @@ void fb_write_cell(unsigned int i, char c, unsigned char fg, unsigned char bg) {
     // Ponteiro direto para o endereço físico onde a placa de vídeo lê a tela
     char *fb = (char *) 0x000B8000;
     
-    fb[i] = c; // O primeiro byte é o caractere da tabela ASCII
+    fb[i*2] = c; // O primeiro byte é o caractere da tabela ASCII
     
     // O segundo byte define as cores (4 bits para o fundo, 4 bits para a letra)
     // Usamos operadores bit-a-bit (Shift e OR) para fundir os dois valores num único byte
-    fb[i + 1] = ((bg & 0x0F) << 4) | (fg & 0x0F);
+    fb[i * 2 + 1] = ((bg & 0x0F) << 4) | (fg & 0x0F);
 }
 
 /**
@@ -69,7 +69,7 @@ void fb_scroll() {
 /**
  * Função inteligente para escrever frases, processar o \n e gerir o scroll automático.
  */
-void write(char *buf, unsigned int len) {
+void fb_write(char *buf, unsigned int len) {
     for (unsigned int i = 0; i < len; i++) {
         // Se detetar uma quebra de linha
         if (buf[i] == '\n') {
@@ -79,8 +79,8 @@ void write(char *buf, unsigned int len) {
             // Calcula a posição linear na memória baseada na linha e coluna atuais
             unsigned int pos = (fb_row * FB_COLS) + fb_col;
             
-            // Pinta a letra (2 = Verde, 0 = Preto)
-            fb_write_cell(pos * 2, buf[i], 2, 0); 
+            // Pinta a letra (15 = Branco, 0 = Preto)
+            fb_write_cell(pos, buf[i], 15, 0); 
             
             fb_col++;
             // Se chegou ao fim da largura da tela, desce para a próxima linha
