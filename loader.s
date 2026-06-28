@@ -17,7 +17,7 @@ align 4
 kernel_stack:
     resb KERNEL_STACK_SIZE      ; Reserva espaço para a pilha
 
-section .text                   ; <--- O PULO DO GATO! Voltando para a seção de código
+section .text                   ; Voltando para a seção de código
 loader:
     mov esp, kernel_stack + KERNEL_STACK_SIZE ; Aponta o ESP para o topo da pilha
 
