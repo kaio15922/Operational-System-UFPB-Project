@@ -127,12 +127,11 @@ Responsável pelo Capítulo 2, estruturando o repositório Git e a infraestrutur
 
 #### Membro 2 (David)
 
-Responsável pelo Capítulo 4, desenvolvendo a lógica de controle dos componentes físicos. Implementou o driver de Framebuffer para escrita na memória de vídeo VGA (0x000B8000), configurou a Porta Serial (COM1) usando funções de E/S em Assembly (io.s) e estruturou o Makefile original do projeto para automatizar as etapas de compilação e linkagem.
-
+Responsável pelo Capítulo 4, desenvolvendo a lógica de controle dos componentes físicos. Implementou o driver de Framebuffer para escrita na memória de vídeo VGA (0x000B8000), configurou a Porta Serial (COM1) usando funções de E/S em Assembly (io.s) e realizou pequenos ajustes no Makefile.
 (Mais em breve)
 
 #### Membro 3 (João)
 
-Responsável pelo Capítulo 3, implementando a rotina principal do kernel (kmain.c) e estabelecendo a transição de execução do baixo nível para o alto nível. Atuou na estruturação do linker script (link.ld) e no ordenamento das seções de memória (.text, .data, .bss) exigidas para o mapeamento correto do executável do sistema.
+Responsável pelo Capítulo 3, implementando a rotina principal do kernel (kmain.c) e estabelecendo a transição de execução do baixo nível para o alto nível. Atuou na estruturação do linker script (link.ld), no ordenamento das seções de memória (.text, .data, .bss) exigidas para o mapeamento correto do executável do sistema e estruturou o Makefile original do projeto para automatizar as etapas de compilação e linkagem.
 
 (Mais em breve)
