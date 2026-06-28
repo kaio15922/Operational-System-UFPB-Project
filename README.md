@@ -113,9 +113,9 @@ HydrogenSO/
 
 ### Integrantes
 
-Kaio Renato de Melo Marinho  | Matrícula: 20240009222
-David Alves Norberto         | Matrícula: 20240009160
-João Filipe de Souza Rosa    | Matrícula: 20240009189
+- Kaio Renato de Melo Marinho  | Matrícula: 20240009222
+- David Alves Norberto         | Matrícula: 20240009160
+- João Filipe de Souza Rosa    | Matrícula: 20240009189
 
 ### Divisão de Tarefas
 
