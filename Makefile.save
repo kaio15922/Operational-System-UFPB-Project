@@ -23,13 +23,7 @@ os.iso: kernel.elf
 kernel.elf: $(OBJECTS)
 	$(LD) $(LDFLAGS) $(OBJECTS) -o kernel.elf
 
-# Regra específica para o gdt.c
-gdt.o: gdt.c gdt.h
-	$(CC) $(CFLAGS) -c gdt.c -o gdt.o
 
-# Regra específica para o gdt.s (compila como gdt_asm.o para não atropelar o gdt.c)
-gdt_asm.o: gdt.s
-	$(AS) $(ASFLAGS) gdt.s -o gdt_asm.o
 
 # Como compilar os arquivos em C
 %.o: %.c

@@ -1,7 +1,11 @@
 #include "framebuffer.h"
 #include "serial.h"
+#include "gdt.h"
 
 void kmain() {
+    // Inicializa a segmentacao
+    init_gdt();
+
     // Inicializa o hardware da porta serial
     // Imprime um log de info
     serial_configure(SERIAL_COM1_BASE);

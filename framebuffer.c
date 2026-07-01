@@ -80,7 +80,7 @@ void fb_write(char *buf, unsigned int len) {
             unsigned int pos = (fb_row * FB_COLS) + fb_col;
             
             // Pinta a letra (15 = Branco, 0 = Preto)
-            fb_write_cell(pos, buf[i], 15, 0); 
+            fb_write_cell(pos, buf[i], 0, 5); 
             
             fb_col++;
             // Se chegou ao fim da largura da tela, desce para a próxima linha
