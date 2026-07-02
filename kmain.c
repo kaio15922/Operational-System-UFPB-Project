@@ -1,25 +1,24 @@
 #include "framebuffer.h"
 #include "serial.h"
-#include "gdt.h"
+#include "idt.h"
 
 void kmain() {
-    // Inicializa a segmentacao
-    init_gdt();
-
-    // Inicializa o hardware da porta serial
-    // Imprime um log de info
     serial_configure(SERIAL_COM1_BASE);
     log_message(LOG_INFO, "Sistema Iniciado! Porta Serie configurada.");
 
-    // Cria uma mensagem e testa a lógica de escrita do ecrã
-    char texto[] = "Printando na tela com sucesso.\n";
-    char texto2[] = "Gears of War melhor que God of War.\n";
-    char texto3[] = "Cap 4 feito!\n";
-    // Enviamos a string inteira, e a função cuidará do loop e do \n sozinha
-    fb_write(texto, sizeof(texto) - 1);
-    fb_write(texto2, sizeof(texto2) - 1);
-    fb_write(texto3, sizeof(texto3) - 1);
+    idt_init();
+    log_message(LOG_INFO, "Tabela IDT de 256 entradas carregada com sucesso.");
 
-    // Imprime um log (debug) final confirmando o sucesso
-    log_message(LOG_DEBUG, "O kernel concluiu a execucao com sucesso.");
+    char texto[] = "IDT e PIC Prontos! Pressione qualquer tecla...\n";
+    fb_write(texto, sizeof(texto) - 1);
+
+    // 1. ATIVA AS INTERRUPÇÕES NA CPU (Executa a instrução 'sti')
+    __asm__ __volatile__("sti");
+
+    // 2. LOOP INFINITO: Mantém o kernel vivo.
+    // A instrução 'hlt' faz o CPU dormir para poupar energia e acordar 
+    // imediatamente quando o teclado disparar uma interrupção.
+    while (1) {
+        __asm__ __volatile__("hlt");
+    }
 }

@@ -9,7 +9,7 @@ LD = ld
 LDFLAGS = -T link.ld -melf_i386
 
 # Lista de arquivos objetos que o sistema precisa para rodar
-OBJECTS = loader.o io.o kmain.o framebuffer.o serial.o gdt.o gdt_asm.o
+OBJECTS = loader.o io.o kmain.o framebuffer.o serial.o gdt.o gdt_asm.o idt.o idt_asm.o interrupt_handler.o interrupt_handler_asm.o keyboard.o
 
 # Regra principal (Roda quando você digita apenas 'make')
 all: os.iso
@@ -31,6 +31,12 @@ gdt.o: gdt.c gdt.h
 gdt_asm.o: gdt.s
 	$(AS) $(ASFLAGS) gdt.s -o gdt_asm.o
 
+idt_asm.o: idt.s
+	$(AS) $(ASFLAGS) idt.s -o idt_asm.o
+
+interrupt_handler_asm.o: interrupt_handler.s
+	$(AS) $(ASFLAGS) interrupt_handler.s -o interrupt_handler_asm.o
+
 # Como compilar os arquivos em C
 %.o: %.c
 	$(CC) $(CFLAGS) $< -o $@
@@ -39,7 +45,7 @@ gdt_asm.o: gdt.s
 %.o: %.s
 	$(AS) $(ASFLAGS) $< -o $@
 
-# Comando mágico para rodar tudo de primeira
+# Caso seja QEMU, substitua por: qemu-system-i386 -cdrom os.iso
 run: os.iso
 	bochs -f bochsrc.txt -q
 
