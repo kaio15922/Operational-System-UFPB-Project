@@ -21,6 +21,12 @@ section .text                   ; Voltando para a seção de código
 loader:
     mov esp, kernel_stack + KERNEL_STACK_SIZE ; Aponta o ESP para o topo da pilha
 
+    ; O GRUB deixa em ebx o endereço da struct multiboot_info, que contém
+    ; (entre outras coisas) onde os módulos carregados foram parados na
+    ; memória. Empilhamos ebx para que ele chegue como argumento em kmain()
+    ; (Capítulo 7 - "Loading an External Program").
+    push ebx
+
     extern kmain
     call kmain                  ; Chama a função principal em C dos seus colegas
 

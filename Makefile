@@ -14,10 +14,18 @@ OBJECTS = loader.o io.o kmain.o framebuffer.o serial.o gdt.o gdt_asm.o idt.o idt
 # Regra principal (Roda quando você digita apenas 'make')
 all: os.iso
 
-# Como gerar a ISO final
-os.iso: kernel.elf
+# Como gerar a ISO final (agora também depende do programa de teste do Cap. 7)
+os.iso: kernel.elf program
 	cp kernel.elf iso/boot/
+	mkdir -p iso/modules
+	cp program iso/modules/program
 	genisoimage -R -b boot/grub/stage2_eltorito -no-emul-boot -boot-load-size 4 -A os -input-charset utf8 -quiet -boot-info-table -o os.iso iso
+
+# Programa de teste do Capítulo 7 ("The Road to User Mode").
+# Compilado como binário plano (flat binary), sem cabeçalho ELF, pois nosso
+# kernel ainda não sabe interpretar esse formato.
+program: program.s
+	$(AS) -f bin program.s -o program
 
 # Como linkar o Kernel
 kernel.elf: $(OBJECTS)
@@ -51,4 +59,4 @@ run: os.iso
 
 # Comando para limpar a sujeira da pasta
 clean:
-	rm -f *.o kernel.elf os.iso bochsout.txt
+	rm -f *.o kernel.elf os.iso bochsout.txt program iso/modules/program
