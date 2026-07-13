@@ -25,7 +25,7 @@ os.iso: kernel.elf program
 # Compilado como binário plano (flat binary), sem cabeçalho ELF, pois nosso
 # kernel ainda não sabe interpretar esse formato.
 program: program.s
-	$(AS) -f bin program.s -o program
+	nasm -f bin program.s -o program
 
 # Como linkar o Kernel
 kernel.elf: $(OBJECTS)
