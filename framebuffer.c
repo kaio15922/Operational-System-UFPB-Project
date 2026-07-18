@@ -20,7 +20,7 @@ unsigned int fb_row = 0;
  */
 void fb_write_cell(unsigned int i, char c, unsigned char fg, unsigned char bg) {
     // Ponteiro direto para o endereço físico onde a placa de vídeo lê a tela
-    char *fb = (char *) 0x000B8000;
+    char *fb = (char *) 0xC00B8000;
     
     fb[i*2] = c; // O primeiro byte é o caractere da tabela ASCII
     
@@ -46,7 +46,7 @@ void fb_move_cursor(unsigned short pos) {
  * Rola a tela uma linha para cima (Scroll) quando o monitor enche.
  */
 void fb_scroll() {
-    char *fb = (char *) 0x000B8000;
+    char *fb = (char *) 0xC00B8000;
     
     // 1. Pega todas as linhas (da 1 até a 24) e copia para a linha de cima
     // Multiplicamos por 2 porque cada "célula" de tela gasta 2 bytes de memória

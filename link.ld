@@ -1,26 +1,30 @@
-ENTRY(loader)		     /* Quando o SO inicia, exec a primeira inst. daqui */
+ENTRY(loader)
 
 SECTIONS {
-    . = 0x00100000;          /* Carrega o kernel em 1 MB */
+    . = 0xC0100000;
 
-    .text ALIGN (0x1000) :   /* Alinhamento de 4 KB */
+    /* A seção de código usa ADDR(.text) */
+    .text ALIGN (0x1000) : AT(ADDR(.text) - 0xC0000000)
     {
-        *(.text)             /* Código de todos os arquivos */
+        *(.text)
     }
 
-    .rodata ALIGN (0x1000) : 
+    /* A seção de strings usa ADDR(.rodata) */
+    .rodata ALIGN (0x1000) : AT(ADDR(.rodata) - 0xC0000000)
     {
-        *(.rodata*)          /* Dados de apenas leitura (strings, constantes) */
+        *(.rodata*)
     }
 
-    .data ALIGN (0x1000) : 
+    /* A seção de variáveis usa ADDR(.data) */
+    .data ALIGN (0x1000) : AT(ADDR(.data) - 0xC0000000)
     {
-        *(.data)             /* Dados globais inicializados */
+        *(.data)
     }
 
-    .bss ALIGN (0x1000) : 
+    /* A seção de variáveis não inicializadas usa ADDR(.bss) */
+    .bss ALIGN (0x1000) : AT(ADDR(.bss) - 0xC0000000)
     {
-        *(.COMMON)           /* Variáveis globais não inicializadas */
+        *(COMMON)
         *(.bss)
     }
 }
