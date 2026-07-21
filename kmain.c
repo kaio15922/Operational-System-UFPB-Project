@@ -49,28 +49,24 @@ static void write_hex_log(char *mensagem, unsigned int valor) {
 
 // O nosso teste do Capítulo 10
 void testar_pmm() {
-    log_message(LOG_INFO, "--- INICIANDO TESTE DO PMM E VMM ---");
-    
-    // 1. Pega uma página física VAZIA e CRUA
+    log_message(LOG_INFO, "[TESTE 1] Pedindo pagina fisica para o PMM...");
     unsigned int page_fisica = pmm_alloc_page();
-    
-    // 2. Mapeia ela no nosso endereço virtual mágico temporário
+
+    log_message(LOG_INFO, "[TESTE 2] Mapeando pagina temporaria...");
     char* page_virtual = (char*) vmm_temp_map_page(page_fisica);
 
-    // 3. AGORA SIM! Podemos escrever na memória sem tomar Kernel Panic
+    log_message(LOG_INFO, "[TESTE 3] Vou escrever na memoria. Se o PC reiniciar, o erro e na proxima linha!");
+    
+    // O grande momento: tentar escrever na memória mapeada
     page_virtual[0] = 'O';
     page_virtual[1] = 'S';
     page_virtual[2] = '!';
     page_virtual[3] = '\0';
 
-    log_message(LOG_INFO, "Consegui escrever na nova pagina física!");
-    log_message(LOG_INFO, page_virtual); // Vai imprimir "OS!" no log do emulador
-    
-    // 4. Limpa a sujeira
+    log_message(LOG_INFO, "[TESTE 4] Sobrevivi a escrita! Desmapeando...");
     vmm_temp_unmap_page();
-    pmm_free_page(page_fisica);
-    
-    log_message(LOG_INFO, "--- CAPITULO 10 CONCLUIDO ---");
+
+    log_message(LOG_INFO, "[TESTE 5] Sucesso total! Travando a CPU para inspecao no Bochs:");
 }
 
 /* --- INÍCIO DO CAPÍTULO 10 --- */

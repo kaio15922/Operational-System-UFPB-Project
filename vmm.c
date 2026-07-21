@@ -1,7 +1,7 @@
 #include "vmm.h"
 #include "serial.h"
 
-// Importamos a tabela de páginas direto do loader.s!
+// Importa a tabela de páginas direto do loader.s
 extern unsigned int boot_page_table[];
 
 // Endereço virtual fixo para a gaveta 1023 (Sugerido pelo livro na seção 10.2)
@@ -13,8 +13,8 @@ static void flush_tlb(unsigned int virtual_address) {
 }
 
 void* vmm_temp_map_page(unsigned int physical_address) {
-    // Pegamos o endereço físico puro (limpando o lixo dos 12 bits finais com &)
-    // E somamos 0x03: Flag de Presente (1) + Leitura/Escrita (2)
+    // Pega o endereço físico puro (limpando o lixo dos 12 bits finais com &)
+    // E soma 0x03: Flag de Presente (1) + Leitura/Escrita (2)
     boot_page_table[1023] = (physical_address & 0xFFFFF000) | 0x03;
 
     // Avisa a CPU que a tabela mudou e ela precisa esquecer o endereço velho
