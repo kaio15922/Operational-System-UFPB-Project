@@ -1,3 +1,8 @@
 [INFO] Sistema Iniciado! Porta Serie configurada.
+[INFO] Gerenciador de Memoria Fisica (PMM) Inicializado.
+[INFO] --- INICIANDO TESTE DO PMM E VMM ---
+[INFO] Consegui escrever na nova pagina física!
+[INFO] OS!
+[INFO] --- CAPITULO 10 CONCLUIDO ---
 [INFO] Tabela IDT de 256 entradas carregada com sucesso.
 [INFO] Modulo encontrado na memoria virtual! Pulando...

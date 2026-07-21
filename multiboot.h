@@ -31,5 +31,6 @@ struct multiboot_module {
 typedef struct multiboot_module multiboot_module_t;
 
 #define MULTIBOOT_FLAG_MODS 0x00000008
+#define MULTIBOOT_FLAG_MEM  0x00000001
 
 #endif /* INCLUDE_MULTIBOOT_H */

@@ -9,7 +9,7 @@ LD = ld
 LDFLAGS = -T link.ld -melf_i386
 
 # Lista de arquivos objetos que o sistema precisa para rodar
-OBJECTS = loader.o io.o kmain.o framebuffer.o serial.o gdt.o gdt_asm.o idt.o idt_asm.o interrupt_handler.o interrupt_handler_asm.o keyboard.o
+OBJECTS = loader.o io.o kmain.o framebuffer.o serial.o gdt.o gdt_asm.o idt.o idt_asm.o interrupt_handler.o interrupt_handler_asm.o keyboard.o pmm.o vmm.o
 
 # Regra principal (Roda quando você digita apenas 'make')
 all: os.iso
@@ -44,6 +44,12 @@ idt_asm.o: idt.s
 
 interrupt_handler_asm.o: interrupt_handler.s
 	$(AS) $(ASFLAGS) interrupt_handler.s -o interrupt_handler_asm.o
+
+pmm.o: pmm.c
+	gcc -m32 -nostdlib -nostdinc -fno-builtin -fno-stack-protector -nostartfiles -nodefaultlibs -c pmm.c -o pmm.o
+	
+vmm.o: vmm.c
+	gcc -m32 -nostdlib -nostdinc -fno-builtin -fno-stack-protector -nostartfiles -nodefaultlibs -c vmm.c -o vmm.o
 
 # Como compilar os arquivos em C
 %.o: %.c
