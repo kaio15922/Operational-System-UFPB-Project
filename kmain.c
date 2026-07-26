@@ -5,6 +5,7 @@
 #include "multiboot.h"
 #include "pmm.h"
 #include "vmm.h"
+#include "kheap.h"
 
 typedef void (*call_module_t)(void);
 
@@ -94,6 +95,23 @@ void kmain(unsigned int ebx,
 
     char texto[] = "IDT e PIC Prontos no Higher-Half! Pressione uma tecla...\n";
     fb_write(texto, sizeof(texto) - 1);
+    
+    kheap_init();
+
+    // Pede dois blocos pequenos
+    char* msg1 = (char*) kmalloc(15);
+    char* msg2 = (char*) kmalloc(20);
+
+    // Escreve neles
+    msg1[0] = 'O'; msg1[1] = 'l'; msg1[2] = 'a'; msg1[3] = '\0';
+    msg2[0] = 'H'; msg2[1] = 'e'; msg2[2] = 'a'; msg2[3] = 'p'; msg2[4] = '\0';
+
+    log_message(LOG_INFO, msg1);
+    log_message(LOG_INFO, msg2);
+
+    // Libera os blocos (o kfree vai automaticamente fundi-los de volta em 4KB livres)
+    kfree(msg1);
+    kfree(msg2);
 
     __asm__ __volatile__("sti");
 
