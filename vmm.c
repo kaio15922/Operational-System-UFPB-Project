@@ -1,6 +1,7 @@
 #include "vmm.h"
 #include "pmm.h"
 #include "serial.h"
+#include "kheap.h"
 
 // Importa a tabela e o diretório iniciais criados estaticamente no loader.s
 extern pde_t boot_page_directory[];
@@ -20,6 +21,30 @@ static void flush_tlb(unsigned int virtual_address) {
 // Inicialização básica (por enquanto aponta para o diretório padrão do boot)
 void vmm_init(void) {
     log_message(LOG_INFO, "Gerenciador de Memoria Virtual (VMM) Dinamico Inicializado.");
+}
+
+page_directory_t* vmm_create_page_directory(void)
+{
+    // Reserva memória para o diretório
+    page_directory_t *dir = (page_directory_t*)kmalloc(sizeof(page_directory_t));
+
+    if (!dir)
+        return 0;
+
+    // Zera todas as entradas
+    for (int i = 0; i < 1024; i++)
+        dir->entries[i] = 0;
+
+    /*
+        Copia as entradas do Kernel.
+
+        No Higher Half, o Kernel ocupa as entradas
+        768 até 1023 do diretório.
+    */
+    for (int i = 768; i < 1024; i++)
+        dir->entries[i] = boot_page_directory[i];
+
+    return dir;
 }
 
 // Alterna o mapa de memória ativo na CPU (Usado para trocar de processo no Cap 11)
@@ -77,6 +102,22 @@ void vmm_unmap(page_directory_t *dir, unsigned int virtual_address) {
 
     vmm_temp_unmap_page();
     flush_tlb(virtual_address);
+}
+
+void vmm_destroy_page_directory(page_directory_t *dir)
+{
+    if (!dir)
+        return;
+
+    /*
+        Futuramente (capítulos seguintes)
+        também iremos liberar todas as tabelas
+        pertencentes ao processo.
+
+        Por enquanto basta liberar o diretório.
+    */
+
+    kfree(dir);
 }
 
 // Mapeamento temporário (Mantido e corrigido para usar a tabela global do loader.s)

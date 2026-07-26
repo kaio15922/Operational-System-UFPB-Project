@@ -10,4 +10,6 @@
 [INFO] Kernel Heap (malloc/free) inicializado com seguranca em 0xC0400000.
 [INFO] Ola
 [INFO] Heap
+[ERROR] OUT OF MEMORY NO HEAP: Nao ha blocos contiguos livres!
+[INFO] Processo criado com sucesso.
 [INFO] Modulo encontrado na memoria virtual! Pulando...

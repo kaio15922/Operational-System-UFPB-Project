@@ -6,6 +6,7 @@
 #include "pmm.h"
 #include "vmm.h"
 #include "kheap.h"
+#include "process.h"
 
 typedef void (*call_module_t)(void);
 
@@ -116,6 +117,18 @@ void kmain(unsigned int ebx,
     // Libera os blocos (o kfree vai automaticamente fundi-los de volta em 4KB livres)
     kfree(msg1);
     kfree(msg2);
+
+    //TESTANDO CRIAÇÃO DE PROCESSOS
+    process_t *proc = process_create();
+
+    if (proc == 0)
+    {
+        log_message(LOG_ERROR, "Falha ao criar processo.");
+    }
+    else
+    {
+        log_message(LOG_INFO, "Processo criado com sucesso.");
+    }
 
     __asm__ __volatile__("sti");
 

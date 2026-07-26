@@ -19,9 +19,12 @@ typedef struct page_directory {
 
 // Funções principais do Gerenciador de Memória Virtual (VMM)
 void vmm_init(void);
+page_directory_t* vmm_create_page_directory(void); // Cria um novo diretório de páginas
 void vmm_switch_page_directory(page_directory_t *dir);
 void vmm_map(page_directory_t *dir, unsigned int virtual_address, unsigned int physical_address, unsigned int flags);
 void vmm_unmap(page_directory_t *dir, unsigned int virtual_address);
+void vmm_destroy_page_directory(page_directory_t *dir); // Libera um diretório criado anteriormente
+
 
 // Utilitários de mapeamento temporário (necessários para o PMM/VMM conversarem)
 void* vmm_temp_map_page(unsigned int physical_address);
