@@ -66,10 +66,14 @@ void pmm_init(multiboot_info_t *mbinfo, unsigned int kp_start, unsigned int kp_e
 }
 // Aloca uma página livre
 unsigned int pmm_alloc_page(void) {
-    for (unsigned int i = 0; i < max_available_pages; i++) {
+    // Comece o loop a partir do fim do primeiro Megabyte ou do fim do kernel, 
+    // em vez do zero (i = 0), apenas como redundância de segurança.
+    unsigned int start_frame = (0x100000 / PAGE_SIZE); 
+
+    for (unsigned int i = start_frame; i < max_available_pages; i++) {
         if (!bitmap_test(i)) {
-            bitmap_set(i);          // Marca como em uso
-            return i * PAGE_SIZE;   // Retorna o endereço físico
+            bitmap_set(i);          
+            return i * PAGE_SIZE;   
         }
     }
     

@@ -5,8 +5,9 @@
 [INFO] [TESTE 3] Vou escrever na memoria. Se o PC reiniciar, o erro e na proxima linha!
 [INFO] [TESTE 4] Sobrevivi a escrita! Desmapeando...
 [INFO] [TESTE 5] Sucesso total! Travando a CPU para inspecao no Bochs:
+[INFO] Gerenciador de Memoria Virtual (VMM) Dinamico Inicializado.
 [INFO] Tabela IDT de 256 entradas carregada com sucesso.
-[INFO] Kernel Heap (malloc/free) inicializado em 0xC03FF000.
+[INFO] Kernel Heap (malloc/free) inicializado com seguranca em 0xC0400000.
 [INFO] Ola
 [INFO] Heap
 [INFO] Modulo encontrado na memoria virtual! Pulando...

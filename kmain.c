@@ -66,6 +66,8 @@ void testar_pmm() {
 
     log_message(LOG_INFO, "[TESTE 4] Sobrevivi a escrita! Desmapeando...");
     vmm_temp_unmap_page();
+    
+    pmm_free_page(page_fisica);
 
     log_message(LOG_INFO, "[TESTE 5] Sucesso total! Travando a CPU para inspecao no Bochs:");
 }
@@ -89,7 +91,9 @@ void kmain(unsigned int ebx,
     pmm_init(mbinfo, kp_start, kp_end);
     // -------------------------------------
     testar_pmm();
-
+    
+    vmm_init();
+    
     idt_init();
     log_message(LOG_INFO, "Tabela IDT de 256 entradas carregada com sucesso.");
 

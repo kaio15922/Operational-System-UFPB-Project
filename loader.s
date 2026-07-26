@@ -1,4 +1,5 @@
 global loader                   ; Símbolo de entrada para o Linker
+global boot_page_directory
 global boot_page_table          ; Exporta a tabela para o C
 
 MAGIC_NUMBER equ 0x1BADB002     ; Número mágico do Multiboot
