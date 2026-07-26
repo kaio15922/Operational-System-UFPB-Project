@@ -1,7 +1,7 @@
 #include "gdt.h"
 
 // Criamos o nosso array da GDT com 3 entradas (0 = Nula, 1 = Código, 2 = Dados)
-gdt_entry_t gdt_entries[3];
+gdt_entry_t gdt_entries[5];
 
 // O ponteiro de 6 bytes que a CPU vai ler
 gdt_ptr_t   gdt_ptr;
@@ -31,7 +31,7 @@ static void gdt_set_gate(int num, unsigned int base, unsigned int limit, unsigne
 /* Função principal que monta a GDT e joga na CPU */
 void init_gdt(void) {
     // Configura o ponteiro: o tamanho da tabela (3 entradas de 8 bytes = 24 bytes, menos 1 = 23)
-    gdt_ptr.size    = (sizeof(gdt_entry_t) * 3) - 1;
+    gdt_ptr.size    = (sizeof(gdt_entry_t) * 5) - 1;
     // Aponta o endereço para o nosso array gdt_entries
     gdt_ptr.address = (unsigned int)&gdt_entries;
 
@@ -49,6 +49,12 @@ void init_gdt(void) {
     // 0x92 ativa: Segmento presente, Ring 0 (Kernel), leitura e escrita (para variáveis e pilha).
     // 0xCF ativa: Mesma granularidade de 4KB e modo 32-bits.
     gdt_set_gate(2, 0, 0xFFFFFFFF, 0x92, 0xCF);
+
+    // Entrada 3: Código do usuário (Ring 3)
+    gdt_set_gate(3, 0, 0xFFFFFFFF, 0xFA, 0xCF);
+
+    // Entrada 4: Dados do usuário (Ring 3)
+    gdt_set_gate(4, 0, 0xFFFFFFFF, 0xF2, 0xCF);
 
     // Passa o endereço do ponteiro para a nossa função em Assembly carregar no chip da CPU
     gdt_flush((unsigned int)&gdt_ptr);
