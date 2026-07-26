@@ -7,8 +7,11 @@
 #include "vmm.h"
 #include "kheap.h"
 #include "process.h"
+#include "user_mode.h"
 
 typedef void (*call_module_t)(void);
+
+extern void switch_page_directory(unsigned int physical_address);
 
 void run_first_module(unsigned int ebx) {
     multiboot_info_t *mbinfo = (multiboot_info_t *) ebx;
