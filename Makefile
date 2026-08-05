@@ -13,7 +13,7 @@ LDFLAGS = -T link.ld -melf_i386
 USER_LDFLAGS = -T user_link.ld -melf_i386
 
 # Lista de arquivos objetos que o sistema precisa para rodar
-OBJECTS = loader.o io.o kmain.o framebuffer.o serial.o gdt.o gdt_asm.o idt.o idt_asm.o interrupt_handler.o interrupt_handler_asm.o keyboard.o pmm.o vmm.o kheap.o process.o user_mode.o start.o
+OBJECTS = loader.o io.o kmain.o framebuffer.o serial.o gdt.o gdt_asm.o idt.o idt_asm.o interrupt_handler.o interrupt_handler_asm.o keyboard.o pmm.o vmm.o kheap.o process.o user_mode.o start.o tlb.o simulador_mmu.o
 
 # Regra principal (Roda quando você digita apenas 'make')
 all: os.iso

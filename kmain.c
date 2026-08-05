@@ -8,6 +8,7 @@
 #include "kheap.h"
 #include "process.h"
 #include "user_mode.h"
+#include "simulador_mmu.h"   /* Passo 4 - Simulador Cap. 10 Silberschatz */
 
 typedef void (*call_module_t)(void);
 
@@ -105,6 +106,32 @@ void kmain(unsigned int ebx,
     fb_write(texto, sizeof(texto) - 1);
     
     kheap_init();
+
+    /* --- PASSO 4: Simulador de Gerenciamento de Memória Virtual ---
+     *
+     * Implementação do programming project do Capítulo 10 do Silberschatz.
+     * Roda os 1.000 endereços do addresses.txt (embutidos em simulador_dados.h)
+     * através do tradutor virtual → físico (simulador_mmu.c), usando:
+     *   - TLB de 16 entradas com política FIFO (tlb.c - Pessoa 1)
+     *   - Tabela de páginas de 256 entradas (simulador_mmu.c - Pessoa 2)
+     *   - pmm_alloc_page() do kernel real a cada page fault
+     *   - BACKING_STORE_bin como "disco" (simulador_dados.h - Pessoa 3)
+     *
+     * Gabarito esperado ao final:
+     *   Taxa de Page Faults: ~24% (244 faults em 1000 endereços)
+     *   Taxa de TLB Hits:    ~5%  ( 54 hits  em 1000 endereços)
+     */
+    mmu_init();
+
+    {
+        unsigned int i;
+        for (i = 0; i < NUM_ENDERECOS; i++) {
+            traduzir_endereco(enderecos_teste[i]);
+        }
+    }
+
+    mmu_imprimir_estatisticas();
+    /* --- FIM DO SIMULADOR --- */
 
     // Pede dois blocos pequenos
     char* msg1 = (char*) kmalloc(15);
