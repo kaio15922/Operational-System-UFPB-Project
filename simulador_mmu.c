@@ -3,6 +3,11 @@
 #include "pmm.h"
 #include "serial.h"
 
+/* Declaracoes externas dos arrays definidos em simulador_dados.h.
+ * Evita multiplas definicoes ao linkar (o kmain.c ja inclui o header). */
+extern unsigned int  enderecos_teste[];
+extern unsigned char BACKING_STORE_bin[];
+
 #define PAGE_TABLE_SIZE 256
 #define SIM_PAGE_SIZE   256  /* tamanho de pagina da simulacao (16 bits) */
 
