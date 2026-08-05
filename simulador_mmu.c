@@ -1,4 +1,3 @@
-#include "simulador_dados.h"
 #include "tlb.h"
 #include "pmm.h"
 #include "serial.h"
