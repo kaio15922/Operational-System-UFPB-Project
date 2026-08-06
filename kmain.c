@@ -125,7 +125,7 @@ void kmain(unsigned int ebx,
 
     {
         unsigned int i;
-        for (i = 0; i < NUM_ENDERECOS; i++) {
+        for (i = 0; i < 1000; i++) {
             traduzir_endereco(enderecos_teste[i]);
         }
     }

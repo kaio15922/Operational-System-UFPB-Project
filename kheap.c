@@ -6,6 +6,9 @@
 // Define o endereço virtual fixo e seguro para o Heap
 #define KHEAP_START 0xC0400000
 
+// Define quantas páginas o nosso Heap vai ter no início (64 páginas = 256 KB)
+#define HEAP_INITIAL_PAGES 64
+
 typedef struct block_header {
     unsigned int size;
     unsigned int is_free;
@@ -18,23 +21,25 @@ static block_header_t *heap_head = 0;
 extern unsigned int boot_page_directory[];
 
 void kheap_init() {
-    // 1. Pede um frame físico livre para começar
-    unsigned int pagina_fisica = pmm_alloc_page();
-    
-    // 2. EM VEZ DE USAR O TEMP, MAPEIA DEFINITIVAMENTE NO NOVO VMM!
-    // Usamos o boot_page_directory (ou o diretório atual do kernel)
-    // Passamos as flags 0x03 (Presente + Escrita) para o Kernel rodar seguro
-    vmm_map((page_directory_t*)boot_page_directory, KHEAP_START, pagina_fisica, VMM_FLAG_WRITE);
+    // 1. Pede frames físicos livres para começar (agora alocamos 64 páginas)
+    for (int i = 0; i < HEAP_INITIAL_PAGES; i++) {
+        unsigned int pagina_fisica = pmm_alloc_page();
+        
+        // 2. EM VEZ DE USAR O TEMP, MAPEIA DEFINITIVAMENTE NO NOVO VMM!
+        // Usamos o boot_page_directory (ou o diretório atual do kernel)
+        // Passamos as flags 0x03 (Presente + Escrita) para o Kernel rodar seguro
+        vmm_map((page_directory_t*)boot_page_directory, KHEAP_START + (i * 4096), pagina_fisica, VMM_FLAG_WRITE);
+    }
     
     // 3. O heap_head agora aponta para o endereço fixo seguro
     heap_head = (block_header_t*) KHEAP_START;
     
-    // 4. Configura o bloco inicial
-    heap_head->size = 4096 - sizeof(block_header_t);
+    // 4. Configura o bloco inicial com o tamanho expandido
+    heap_head->size = (HEAP_INITIAL_PAGES * 4096) - sizeof(block_header_t);
     heap_head->is_free = 1;
     heap_head->next = 0;
     
-    log_message(LOG_INFO, "Kernel Heap (malloc/free) inicializado com seguranca em 0xC0400000.");
+    log_message(LOG_INFO, "Kernel Heap (malloc/free) expandido inicializado com seguranca em 0xC0400000.");
 }
 
 void* kmalloc(unsigned int size) {

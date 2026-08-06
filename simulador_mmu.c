@@ -1,5 +1,6 @@
 #include "tlb.h"
 #include "pmm.h"
+#include "vmm.h"
 #include "serial.h"
 
 /* Declaracoes externas dos arrays definidos em simulador_dados.h.
@@ -31,9 +32,8 @@ static unsigned char proximo_frame = 0;
 static void log_numero(char *prefixo, unsigned int valor)
 {
     char buf[12];
-    int pos = 10;
-    buf[11] = '\0';
-    buf[10] = '0';
+    int pos = 11;
+    buf[--pos] = '\0'; // Terminador de string no final da array
 
     if (valor == 0) {
         log_message(LOG_INFO, prefixo);
@@ -87,27 +87,25 @@ void traduzir_endereco(unsigned int endereco_virtual)
         {
             page_faults++;
 
-            /* Usa o PMM real do kernel para reservar um frame fisico.
-             * É aqui que entra o hardware de verdade — pmm_alloc_page()
-             * mexe no bitmap real da RAM x86 (Capitulo 10). */
-            pmm_alloc_page();
+            /* 1. Usa o PMM para alocar 4KB da memoria RAM REAL da maquina! */
+            unsigned int frame_fisico_real = pmm_alloc_page();
 
-            /* Atribui o proximo numero de frame da simulacao a esta pagina.
-             * Cada page fault consome um frame diferente (sem substituicao,
-             * como o Silberschatz pede nessa versao basica). */
-            frame = proximo_frame++;
+            /* 2. O processador proibe escrever em enderecos fisicos crus. 
+             * Usamos o VMM para criar uma janela virtual temporaria para essa RAM. */
+            char* janela_virtual = (char*) vmm_temp_map_page(frame_fisico_real);
 
-            /* Copia os 256 bytes da pagina do BACKING_STORE para a memoria.
-             * Na simulacao do livro, o backing store e o "disco": a pagina N
-             * fica nos bytes N*256 ate N*256+255 do arquivo BACKING_STORE.bin.
-             * Como o array ja esta na memoria (simulador_dados.h), fazemos
-             * a copia byte a byte sem precisar de memcpy da stdlib. */
+            /* 3. Copia os 256 bytes do "Disco" (BACKING_STORE) para a RAM REAL Mapeada */
             unsigned int src = (unsigned int)pagina * SIM_PAGE_SIZE;
-            unsigned int dst = (unsigned int)frame  * SIM_PAGE_SIZE;
-            unsigned int b;
-            for (b = 0; b < SIM_PAGE_SIZE; b++) {
-                BACKING_STORE_bin[dst + b] = BACKING_STORE_bin[src + b];
+            for (unsigned int b = 0; b < SIM_PAGE_SIZE; b++) {
+                janela_virtual[b] = BACKING_STORE_bin[src + b];
             }
+
+            /* 4. Fecha a janela para manter a seguranca do Kernel */
+            vmm_temp_unmap_page();
+
+            /* 5. A simulacao original do livro espera frames logicos de 0 a 255
+             * entao mantemos o contador logico para as estatisticas baterem. */
+            frame = proximo_frame++;
 
             tabela_paginas[pagina].frame = (unsigned char) frame;
             tabela_paginas[pagina].valido = 1;
@@ -130,7 +128,7 @@ void traduzir_endereco(unsigned int endereco_virtual)
      *   Virtual: XXXXX  Fisico: YYYYY  Valor: ZZZ */
     log_numero("Virtual: ", endereco_virtual);
     log_numero("Fisico:  ", endereco_fisico);
-    log_numero("Valor:   ", (unsigned int)(signed char)valor_lido);
+    log_numero("Valor:   ", (unsigned int)valor_lido);
 }
 
 /* Imprime as estatisticas finais — os dois numeros do gabarito do professor:
