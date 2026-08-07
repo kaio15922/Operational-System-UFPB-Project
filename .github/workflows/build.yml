@@ -1,0 +1,35 @@
+name: HydrogenSO Build CI
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  build-kernel:
+    runs-on: ubuntu-latest
+
+    steps:
+    # 1. Faz o clone do código do seu repositório na máquina do GitHub
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    # 2. Instala as ferramentas de compilação de 32 bits que o seu Kernel exige
+    - name: Install dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y gcc-multilib nasm make ld
+
+    # 3. Executa o seu Makefile para compilar tudo e gerar o kernel.elf
+    - name: Compile Kernel
+      run: |
+        make clean
+        make kernel.elf
+
+    # 4. (Opcional) Guarda o kernel.elf gerado como um artefato para download
+    - name: Upload Kernel Binary
+      uses: actions/upload-artifact@v4
+      with:
+        name: kernel-elf-binary
+        path: kernel.elf
