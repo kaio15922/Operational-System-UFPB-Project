@@ -11,25 +11,33 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    # 1. Faz o clone do código do seu repositório na máquina do GitHub
     - name: Checkout code
       uses: actions/checkout@v4
 
-    # 2. Instala as ferramentas de compilação de 32 bits que o seu Kernel exige
+    # 1. Adicionamos xorriso e grub-pc-bin na lista de dependências
     - name: Install dependencies
       run: |
         sudo apt-get update
-        sudo apt-get install -y gcc-multilib nasm make
+        sudo apt-get install -y gcc-multilib nasm make xorriso grub-pc-bin grub-common
 
-    # 3. Executa o seu Makefile para compilar tudo e gerar o kernel.elf
     - name: Compile Kernel
       run: |
         make clean
         make kernel.elf
 
-    # 4. (Opcional) Guarda o kernel.elf gerado como um artefato para download
-    - name: Upload Kernel Binary
+    # 2. Criamos a estrutura de pastas do GRUB e geramos o .iso mágico
+    - name: Generate Bootable ISO
+      run: |
+        mkdir -p isodir/boot/grub
+        cp kernel.elf isodir/boot/hydrogen.elf
+        echo 'menuentry "HydrogenSO" {' > isodir/boot/grub/grub.cfg
+        echo '  multiboot /boot/hydrogen.elf' >> isodir/boot/grub/grub.cfg
+        echo '}' >> isodir/boot/grub/grub.cfg
+        grub-mkrescue -o hydrogenso.iso isodir
+
+    # 3. Fazemos o upload do .iso gerado em vez do .elf
+    - name: Upload ISO Binary
       uses: actions/upload-artifact@v4
       with:
-        name: kernel-elf-binary
-        path: kernel.elf
+        name: hydrogenso-iso
+        path: hydrogenso.iso
