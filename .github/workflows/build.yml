@@ -19,7 +19,7 @@ jobs:
     - name: Install dependencies
       run: |
         sudo apt-get update
-        sudo apt-get install -y gcc-multilib nasm make ld
+        sudo apt-get install -y gcc-multilib nasm make
 
     # 3. Executa o seu Makefile para compilar tudo e gerar o kernel.elf
     - name: Compile Kernel
